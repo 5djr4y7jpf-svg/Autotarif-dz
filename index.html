@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoTarif DZ - حاسبة السيارات في الجزائر</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; text-align: right; }
+        .container { max-width: 450px; margin: auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; }
+        label { display: block; margin-top: 15px; font-weight: bold; color: #555; }
+        input, select { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; }
+        button { width: 100%; background: #007bff; color: white; border: none; padding: 12px; margin-top: 20px; border-radius: 6px; font-size: 16px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 20px; background: #e9ecef; padding: 15px; border-radius: 6px; }
+        .result p { margin: 8px 0; font-size: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🚗 AutoTarif DZ</h2>
+    
+    <label>سعر السيارة في الخارج (باليورو €):</label>
+    <input type="number" id="carPrice" placeholder="مثال: 15000">
+
+    <label>سعة المحرك ونوعه:</label>
+    <select id="engineType">
+        <option value="small">بنزين / أقل من 1.8L (تخفيض 80% للمحرك الصغير)</option>
+        <option value="large">بنزين أو ديزل / أكثر من 1.8L (عادي)</option>
+    </select>
+
+    <label>سعر اليورو في السوق السوداء (السكوار):</label>
+    <input type="number" id="sqarRate" value="276">
+
+    <button onclick="calculateTarif()">احسب التكلفة الفورية ⚡</button>
+
+    <div class="result" id="resultBox" style="display:none;">
+        <h3>📊 النتائج التقديرية:</h3>
+        <p>💵 ثمن السيارة (بالسكوار): <strong id="resSqar">0</strong> دج</p>
+        <p>🏛️ رسوم الجمركة والتخليص (رسمي): <strong id="resCustoms">0</strong> دج</p>
+        <hr>
+        <p>💰 <strong>التكلفة الإجمالية الصافية:</strong> <strong id="resTotal" style="color: #d9534f; font-size: 18px;">0</strong> دج</p>
+    </div>
+</div>
+
+<script>
+function calculateTarif() {
+    let priceEuro = parseFloat(document.getElementById('carPrice').value);
+    let engine = document.getElementById('engineType').value;
+    let sqarRate = parseFloat(document.getElementById('sqarRate').value);
+    
+    if (!priceEuro || priceEuro <= 0) {
+        alert("الرجاء إدخال سعر صحيح للسيارة باليورو");
+        return;
+    }
+
+    let carPriceDZD = priceEuro * sqarRate;
+    let officialRate = 151;
+    let baseCustomsValue = priceEuro * officialRate;
+    let customsFees = 0;
+
+    if (engine === 'small') {
+        customsFees = baseCustomsValue * 0.12; 
+    } else {
+        customsFees = baseCustomsValue * 0.55; 
+    }
+
+    let totalCost = carPriceDZD + customsFees;
+
+    document.getElementById('resSqar').innerText = carPriceDZD.toLocaleString();
+    document.getElementById('resCustoms').innerText = Math.round(customsFees).toLocaleString();
+    document.getElementById('resTotal').innerText = Math.round(totalCost).toLocaleString();
+    document.getElementById('resultBox').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
